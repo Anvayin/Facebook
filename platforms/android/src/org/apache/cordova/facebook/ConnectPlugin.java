@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AppEventsLogger;
+import com.facebook.AppLinkData;
 import com.facebook.FacebookDialogException;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
@@ -161,9 +162,34 @@ public class ConnectPlugin extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-
-        if (action.equals("login")) {
+    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        if (action.equals("fetchDeferredDeepLinkData")){
+            AppLinkData.fetchDeferredAppLinkData(this.cordova.getActivity().getApplicationContext(),
+                    new AppLinkData.CompletionHandler() {
+                        @Override
+                        public void onDeferredAppLinkDataFetched(AppLinkData appLinkData) {
+                            if (appLinkData != null) {
+                                Bundle bundle = appLinkData.getArgumentBundle();
+                                JSONObject json = new JSONObject();
+                                Set<String> keys = bundle.keySet();
+                                for (String key : keys) {
+                                    try {
+                                        json.put(key, JSONObject.wrap(bundle.get(key)));
+                                    } catch (JSONException e) {
+                                        callbackContext.error("Exception while constructing JSON object.");
+                                    }
+                                }
+                                callbackContext.success(json);
+                            } else {
+                                callbackContext.success();
+                            }
+                        }
+                    }
+            );
+            PluginResult pr = new PluginResult(PluginResult.Status.NO_RESULT);
+            pr.setKeepCallback(true);
+            return true;
+        } else if (action.equals("login")) {
             Log.d(TAG, "login FB");
             // Get the permissions
             String[] arrayPermissions = new String[args.length()];

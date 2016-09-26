@@ -122,6 +122,10 @@ if (cordova.platformId == "browser") {
             }
         },
 
+        fetchDeferredDeepLinkData : function(s, f){
+            s();
+        },
+
         api: function (graphPath, permissions, s, f) {
             // JS API does not take additional permissions
             
@@ -241,6 +245,10 @@ if (cordova.platformId == "browser") {
         api: function (graphPath, permissions, s, f) {
             if (!permissions) { permissions = []; }
             exec(s, f, "FacebookConnectPlugin", "graphApi", [graphPath, permissions]);
+        },
+
+        fetchDeferredDeepLinkData : function(s,f){
+            exec(s, f, "FacebookConnectPlugin", "fetchDeferredDeepLinkData", []);
         }
     };
 
