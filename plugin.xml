@@ -60,7 +60,7 @@
               android:label="@string/fb_app_name" />
         </config-file>
 
-        <framework src="com.facebook.android:facebook-android-sdk:4.11.+"/>
+        <framework src="com.facebook.android:facebook-android-sdk:4.8.+"/>
 
         <framework src="src/android/facebook-minsdk-check.gradle" custom="true" type="gradleReference"/>
 
